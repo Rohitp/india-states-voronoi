@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    
+.state {fill: none}
+
+.state.WB { fill: #cdd; }
+.state.TN { fill: #cad; }
+.state.INN { fill: #cdd; }
+.state.INL { fill: #cdd; }
+
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+    var width = 960,
+        height = 1160;
+    
+    var svg = d3.select( "body" )
+        .append( "svg" )
+        .attr( "width", width )
+        .attr( "height", height );
+
+    d3.json("mapfiles/admin_1/india.json", function(error, ind) {
+        
+        if (error) return console.error(error);
+
+        var shapes = svg.append( "g" );
+          
+        // Figured out values through trial and error.
+        var projection = d3.geo.mercator().scale(1000).translate([-800, 700]);
+        var geopath = d3.geo.path().projection(projection);
+
+        shapes.selectAll( "path" )
+                    .data(ind.features)
+                    .enter()
+                    .append( "path" )
+                    .attr( "fill", "none" )
+                    .attr("stroke", "#a77")
+                    .attr( "d", geopath);
+
+        svg.selectAll(".state")
+            .data(ind.features)
+            .enter().append("path")
+            .attr("class", function(d) { console.log(d); return "state " + d.properties.postal; })
+            .attr("d", geopath);
+
+    });
+
+</script>
